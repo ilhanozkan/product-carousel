@@ -132,42 +132,6 @@
               user-select: none;
             }
 
-            // @media screen and (max-width: 1480px) {
-            //   .carousel-product-card {
-            //     flex: 0 0 calc(25% - 17.25px);
-            //   }
-            // }
-
-            // @media screen and (max-width: 1280px) {
-            //   .carousel-product-card {
-            //     flex: 0 0 calc(33% - 15.33px);
-            //   }
-            // }
-
-            // @media screen and (max-width: 992px) {
-            //   .carousel-product-card {
-            //     flex: 0 0 calc(50% - 11.5px);
-            //   }
-            // }
-
-            // @media screen and (max-width: 576px) {
-            //   .carousel-arrows button {
-            //     display: none;
-            //   }
-            // }
-
-            @media screen and (max-width: 480px) {
-              .carousel-title {
-                font-size: 2.2rem;
-                line-height: 1.5;
-              }
-
-              .carousel-title-container {
-                padding: 0 22px 0 10px;
-                background-color: #fff;
-              }
-            }
-
             .carousel-product-card:hover {
               box-shadow: 0 0 0 0 #00000030,inset 0 0 0 3px #f28e00;
             }
@@ -313,6 +277,73 @@
             .favorite-button-icon {
               transition: opacity .3s ease-in-out;
             }
+
+            @media screen and (max-width: 1480px) {
+              .carousel-product-card {
+                flex: 0 0 calc(25% - 17.25px);
+              }
+            }
+
+            @media screen and (max-width: 1280px) {
+              .carousel-product-card {
+                flex: 0 0 calc(33% - 15.33px);
+              }
+            }
+
+            @media screen and (max-width: 992px) {
+              .carousel-product-card {
+                flex: 0 0 calc(50% - 11.5px);
+              }
+            }
+
+            @media screen and (max-width: 576px) {
+              .carousel-arrows button {
+                display: none;
+              }
+
+              .carousel-product-card {
+                flex: 0 0 50%;
+              }
+            }
+
+            @media screen and (max-width: 480px) {
+              .carousel-title {
+                font-size: 2.2rem;
+                line-height: 1.5;
+              }
+
+              .carousel-title-container {
+                padding: 0 22px 0 10px;
+                background-color: #fff;
+              }
+
+              .carousel-product-add-to-cart {
+                padding: 10px !important;
+              }
+
+              .carousel-product-card {
+                padding: 8px !important;
+                margin-right: 10px !important;
+              }
+
+              .star-icon {
+                height: 11px !important;
+              }
+            }
+
+            @media screen and (max-width: 376px) {
+              .carousel-product-content {
+                padding: 0 17px 87px 0 !important;
+              }
+
+              .carousel-product-bottom {
+                padding: 5px 5px 10px 0 !important;
+              }
+
+              .star-icon {
+                height: 9px !important;
+              }
+            }
             `;
 
     const style = document.createElement("style");
@@ -329,34 +360,33 @@
     let startX = 0;
     let currentX = 0;
     let hasDragged = false;
-
     let currentIndex = 0;
-    // 265px = 242px card width + 20px margin-right + 3px margin-left
-    let cardWidth = 265;
+
+    function getCardWidth() {
+      const firstCard = carouselProducts.querySelector(
+        ".carousel-product-card"
+      );
+      // 265px = 242px card width + 20px margin-right + 3px margin-left
+      if (!firstCard) return 265;
+
+      const cardStyle = window.getComputedStyle(firstCard);
+      const cardWidth = firstCard.offsetWidth;
+      const margins =
+        parseFloat(cardStyle.marginRight || 0) +
+        parseFloat(cardStyle.marginLeft || 0);
+
+      return margins + cardWidth;
+    }
 
     function getVisibleCardsCount() {
-      return Math.floor(carouselProducts.offsetWidth / cardWidth) || 5;
-      // const windowWidth = window.innerWidth;
-
-      // switch (windowWidth) {
-      //   case windowWidth > 1480:
-      //     return 5;
-      //   case windowWidth <= 1480:
-      //     return 4;
-      //   case windowWidth <= 1280:
-      //     return 3;
-      //   case windowWidth <= 992:
-      //     return 2;
-      //   default:
-      //     return Math.floor(carouselProducts.offsetWidth / cardWidth) || 5;
-      // }
+      return Math.floor(carouselProducts.offsetWidth / getCardWidth()) || 1;
     }
 
     function updateCarousel() {
       const maxIndex = Math.max(0, data.length - getVisibleCardsCount());
       currentIndex = Math.max(0, Math.min(currentIndex, maxIndex));
 
-      const translateX = -(currentIndex * cardWidth);
+      const translateX = -(currentIndex * getCardWidth());
       carouselProducts.style.transform = `translateX(${translateX}px)`;
 
       // Disabled / Active Arrows
@@ -405,7 +435,7 @@
       // If drag distance greater than 5 pixels set hasDragged true
       if (Math.abs(distanceX) > 5) hasDragged = true;
 
-      const currentTranslate = -(currentIndex * cardWidth);
+      const currentTranslate = -(currentIndex * getCardWidth());
       carouselProducts.style.transform = `translateX(${
         currentTranslate + distanceX
       }px)`;
@@ -420,7 +450,7 @@
       carouselProducts.style.cursor = "grab";
 
       const distanceX = currentX - startX;
-      const threshold = cardWidth / 3;
+      const threshold = getCardWidth() / 3;
 
       if (Math.abs(distanceX) > threshold) {
         if (distanceX > 0 && currentIndex > 0) {
