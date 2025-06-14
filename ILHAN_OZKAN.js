@@ -2,6 +2,7 @@
   const FETCH_PRODUCTS_URL =
     "https://gist.githubusercontent.com/sevindi/8bcbde9f02c1d4abe112809c974e1f49/raw/9bf93b58df623a9b16f1db721cd0a7a539296cf0/products.json";
   const PRODUCTS_LOCALSTORAGE_KEY = "products_data";
+  const FAVORITES_LOCALSTORAGE_KEY = "favorite_products";
   let data = [];
 
   const init = () => {
@@ -653,12 +654,12 @@
     };
 
     const localStorageFavorites =
-      localStorage.getItem("favorite_products") || "[]";
+      localStorage.getItem(FAVORITES_LOCALSTORAGE_KEY) || "[]";
     let favs = JSON.parse(localStorageFavorites);
 
     const toggleFavorite = (e) => {
       const localStorageFavorites =
-        localStorage.getItem("favorite_products") || "[]";
+        localStorage.getItem(FAVORITES_LOCALSTORAGE_KEY) || "[]";
 
       // Add to localStorage
       try {
@@ -670,14 +671,14 @@
 
         if (favs.includes(productId)) {
           localStorage.setItem(
-            "favorite_products",
+            FAVORITES_LOCALSTORAGE_KEY,
             JSON.stringify(favs.filter((favId) => favId != productId))
           );
           return updateFavoriteButton(button, false);
         }
 
         localStorage.setItem(
-          "favorite_products",
+          FAVORITES_LOCALSTORAGE_KEY,
           JSON.stringify([...favs, productId])
         );
         updateFavoriteButton(button, true);
