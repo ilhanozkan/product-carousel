@@ -278,20 +278,104 @@
               transition: opacity .3s ease-in-out;
             }
 
+            .carousel-skeleton-card {
+              display: block;
+              position: relative;
+              margin: 20px 0 20px 3px;
+              padding: 0;
+              width: 242px;
+              margin-right: 20px;
+              border-radius: 10px;
+              border: 1.5px solid #f2fafe;
+              background-color: #fff;
+              flex-shrink: 0;
+              user-select: none;
+            }
+
+            .carousel-skeleton-content {
+              padding-bottom: 87px;
+              margin-inline: 12px 18px;
+            }
+
+            .carousel-skeleton-img {
+              width: 100%;
+              height: 203px;
+              background: #f2fafe;
+              background-size: 200% 100%;
+              border-radius: 8px 8px 0 0;
+              margin-bottom: 45px;
+            }
+
+            .carousel-skeleton-title {
+              height: 20px;
+              background: #f2fafe;
+              background-size: 200% 100%;
+              border-radius: 360px;
+              margin-bottom: 10px;
+            }
+
+            .carousel-skeleton-stars {
+              height: 14px;
+              width: 100px;
+              background: #f2fafe;
+              background-size: 200% 100%;
+              border-radius: 360px;
+              margin-bottom: 15px;
+            }
+
+            .carousel-skeleton-price {
+              height: 24px;
+              width: 80px;
+              background: #f2fafe;
+              background-size: 200% 100%;
+              border-radius: 360px;
+              margin-bottom: 20px;
+            }
+
+            .carousel-skeleton-button {
+              width: calc(100% - 34px);
+              height: 50px;
+              background: #f2fafe;
+              background-size: 200% 100%;
+              border-radius: 360px;
+              position: absolute;
+              bottom: 17px;
+              left: 17px;
+              right: 17px;
+            }
+
+            .carousel-skeleton-box::after {
+              position: absolute;
+              top: 0;
+              right: 0;
+              bottom: 0;
+              left: 0;
+              transform: translateX(-100%);
+              background-image: linear-gradient(90deg, #fff0, #fff3 20%, #ffffff80 60%, #fff0);
+              animation: shimmer 3s infinite;
+              content: "";
+            }
+
+            @keyframes shimmer {
+              100% {
+                transform: translateX(100%);
+              }
+            }
+
             @media screen and (max-width: 1480px) {
-              .carousel-product-card {
+              .carousel-product-card, .carousel-skeleton-card {
                 flex: 0 0 calc(25% - 17.25px);
               }
             }
 
             @media screen and (max-width: 1280px) {
-              .carousel-product-card {
+              .carousel-product-card, .carousel-skeleton-card {
                 flex: 0 0 calc(33% - 15.33px);
               }
             }
 
             @media screen and (max-width: 992px) {
-              .carousel-product-card {
+              .carousel-product-card, .carousel-skeleton-card {
                 flex: 0 0 calc(50% - 11.5px);
               }
             }
@@ -301,7 +385,7 @@
                 display: none;
               }
 
-              .carousel-product-card {
+              .carousel-product-card, .carousel-skeleton-card {
                 flex: 0 0 50%;
               }
             }
@@ -321,7 +405,7 @@
                 padding: 10px !important;
               }
 
-              .carousel-product-card {
+              .carousel-product-card, .carousel-skeleton-card {
                 padding: 8px !important;
                 margin-right: 10px !important;
               }
@@ -508,9 +592,34 @@
     }, 100);
   }
 
+  function renderSkeletonCards() {
+    const carouselProductsContainer =
+      document.querySelector(".carousel-products");
+
+    carouselProductsContainer.innerHTML = "";
+
+    for (let i = 0; i < 5; i++) {
+      const skeletonCard = `
+        <div class="carousel-skeleton-card">
+          <div class="carousel-skeleton-box carousel-skeleton-img"></div>
+          <div class="carousel-skeleton-content">
+            <div class="carousel-skeleton-title"></div>
+            <div class="carousel-skeleton-stars"></div>
+            <div class="carousel-skeleton-price"></div>
+          </div>
+          <div class="carousel-skeleton-button"></div>
+        </div>
+      `;
+
+      carouselProductsContainer.insertAdjacentHTML("beforeend", skeletonCard);
+    }
+  }
+
   function renderProductCards() {
     const carouselProductsContainer =
       document.querySelector(".carousel-products");
+
+    carouselProductsContainer.innerHTML = "";
 
     const starIcon =
       '<svg class="star-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><path d="M316.9 18C311.6 7 300.4 0 288.1 0s-23.4 7-28.8 18L195 150.3 51.4 171.5c-12 1.8-22 10.2-25.7 21.7s-.7 24.2 7.9 32.7L137.8 329 113.2 474.7c-2 12 3 24.2 12.9 31.3s23 8 33.8 2.3l128.3-68.5 128.3 68.5c10.8 5.7 23.9 4.9 33.8-2.3s14.9-19.3 12.9-31.3L438.5 329 542.7 225.9c8.6-8.5 11.7-21.2 7.9-32.7s-13.7-19.9-25.7-21.7L381.2 150.3 316.9 18z"/></svg>';
@@ -662,6 +771,9 @@
       data = JSON.parse(localStorageData);
       return renderProductCards();
     }
+
+    // Show skeleton while fetching API data
+    renderSkeletonCards();
 
     const response = await fetch(FETCH_PRODUCTS_URL);
     data = await response.json();
